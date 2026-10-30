@@ -588,6 +588,7 @@ html.dark #page-progress-bar {
     bottom: 10px;
   }
 
+  .hero-ryven-pin,
   .hero-rext-pin {
     font-size: 7px;
     padding: 1px 6px;
@@ -1051,6 +1052,7 @@ html.dark .hero-subaru-badge {
   border-color: #52525b !important;
 }
 
+html.dark .hero-ryven-pin,
 html.dark .hero-rext-pin {
   background-color: #FF4D8D !important;
   color: #ffffff !important;

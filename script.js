@@ -435,7 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 6h TTL, fall back to the stale cache when a fetch fails, then to the
   // hardcoded data-fallback date, and finally hide the badge rather than print
   // a fake value.
-  const GH_CACHE_KEY = "rext.gh.pushdates";
+  const GH_CACHE_KEY = "ryven.gh.pushdates";
   const GH_CACHE_TTL = 6 * 60 * 60 * 1000;
 
   const githubDateSpans = document.querySelectorAll(".github-date");
