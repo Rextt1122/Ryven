@@ -177,16 +177,16 @@ html.dark #page-progress-bar {
   transform: translateY(0) rotate(var(--rot, 1deg)) scale(1);
 }
 
-/* Idle float after reveal, staggered per tile */
+/* Idle float after reveal, staggered per tile (Hardware-accelerated) */
 @keyframes gallery-float-up {
 
   0%,
   100% {
-    transform: translateY(0px) rotate(var(--rot, 1deg))
+    transform: translate3d(0, 0px, 0) rotate(var(--rot, 1deg));
   }
 
   50% {
-    transform: translateY(-5px) rotate(var(--rot, 1deg))
+    transform: translate3d(0, -5px, 0) rotate(var(--rot, 1deg));
   }
 }
 
@@ -194,12 +194,29 @@ html.dark #page-progress-bar {
 
   0%,
   100% {
-    transform: translateY(0px) rotate(var(--rot, 0deg))
+    transform: translate3d(0, 0px, 0) rotate(var(--rot, 0deg));
   }
 
   50% {
-    transform: translateY(5px) rotate(var(--rot, 0deg))
+    transform: translate3d(0, 5px, 0) rotate(var(--rot, 0deg));
   }
+}
+
+/* GPU acceleration for continuous animations to eliminate layout repaints */
+.gallery-item,
+.project-reveal,
+.animate-float,
+.animate-float-pink,
+.animate-wiggle-yellow,
+.animate-spinSlow {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Off-screen animation pause managed by IntersectionObserver */
+.anim-paused {
+  animation-play-state: paused !important;
 }
 
 .gallery-reveal.gallery-visible:nth-child(odd) {
@@ -217,10 +234,10 @@ html.dark #page-progress-bar {
   animation-play-state: paused !important;
 }
 
-/* ── Project Cards Scroll Reveal ─────────────────── */
+/* Project Cards Scroll Reveal */
 .project-reveal {
   opacity: 0;
-  transform: translateY(32px) scale(0.96);
+  transform: translate3d(0, 32px, 0) scale(0.96);
   transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
               transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: calc(var(--card-idx, 0) * 80ms);
@@ -232,7 +249,7 @@ html.dark #page-progress-bar {
 
 .project-reveal.project-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translate3d(0, 0, 0) scale(1);
   animation-delay: calc(var(--card-idx, 0) * 80ms + 550ms);
 }
 
@@ -240,9 +257,7 @@ html.dark #page-progress-bar {
   animation-play-state: paused !important;
 }
 
-/* ══════════════════════════════════════════
-   LIGHTBOX — Simple Minimal Preview
-   ══════════════════════════════════════════ */
+/* Lightbox */
 
 .lightbox {
   position: fixed;
@@ -286,7 +301,7 @@ html.dark #page-progress-bar {
   overflow: hidden;
 }
 
-/* ── Topbar: just name + counter + close ── */
+/* Topbar: just name + counter + close */
 .lightbox-topbar {
   display: flex;
   justify-content: space-between;
@@ -345,7 +360,7 @@ html.dark #page-progress-bar {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ── Image area ── */
+/* Image area */
 .lightbox-img-wrap {
   display: flex;
   align-items: center;
@@ -369,13 +384,13 @@ html.dark #page-progress-bar {
   opacity: 0.2;
 }
 
-/* ── Bottombar & swipe hint: hidden ── */
+/* Bottombar & swipe hint: hidden */
 .lightbox-bottombar,
 .lightbox-swipe-hint {
   display: none !important;
 }
 
-/* ── Nav buttons ── */
+/* Nav buttons */
 .lightbox-nav {
   width: 40px;
   height: 40px;
@@ -405,7 +420,7 @@ html.dark #page-progress-bar {
   pointer-events: none;
 }
 
-/* ══ MOBILE ══ */
+/* MOBILE */
 @media (max-width: 767px) {
   .lightbox {
     padding: 16px;
@@ -597,13 +612,7 @@ html.dark #page-progress-bar {
   }
 }
 
-/* ══════════════════════════════════════════
-   REDUCED MOTION
-   All looping decor (spin, float, blink, ticker,
-   wiggle, gallery idle float) collapses to static.
-   Scroll-reveal must still END visible, otherwise
-   tiles stay stuck at opacity 0 for these users.
-   ══════════════════════════════════════════ */
+/* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
 
@@ -632,9 +641,7 @@ html.dark #page-progress-bar {
   }
 }
 
-/* ══════════════════════════════════════════
-   UTILITY CLASSES
-   ══════════════════════════════════════════ */
+/* UTILITY CLASSES */
 
 .nav-item {
   display: flex;
@@ -703,7 +710,7 @@ html.dark #page-progress-bar {
   }
 }
 
-/* Utility classes for clean HTML without inline styles */
+/* Utilities */
 .bg-grid-pattern {
   background-image: linear-gradient(to right, #f3f4f6 1px, transparent 1px), linear-gradient(to bottom, #f3f4f6 1px, transparent 1px);
   background-size: 32px 32px;
@@ -798,9 +805,7 @@ html.dark #page-progress-bar {
   }
 }
 
-/* ══════════════════════════════════════════
-   MOBILE & ANDROID SAFE AREA PADDING
-   ══════════════════════════════════════════ */
+/* MOBILE & ANDROID SAFE AREA PADDING */
 
 /* Fixed navbar with notch / camera punch-hole safe space */
 nav {
@@ -876,9 +881,7 @@ nav {
   padding-right: max(12px, env(safe-area-inset-right, 0px));
 }
 
-/* ══════════════════════════════════════════
-   DARK MODE (Cyber-Brutalism)
-   ══════════════════════════════════════════ */
+/* DARK MODE (Cyber-Brutalism) */
 
 html.dark {
   background-color: #0c0d10 !important;

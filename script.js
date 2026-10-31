@@ -2,7 +2,7 @@
 history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
-// --- Top Loading Progress Bar ---
+// Top Loading Progress Bar
 const progressBar = document.getElementById("page-progress-bar");
 if (progressBar) {
   progressBar.style.width = "40%";
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- Theme Toggle (Dark / Light Mode) ---
+  // Theme Toggle (Dark / Light Mode)
   const themeToggle = document.getElementById("theme-toggle");
   const iconMoon = document.getElementById("theme-icon-moon");
   const iconSun = document.getElementById("theme-icon-sun");
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Mobile Menu Toggle ---
+  // Mobile Menu Toggle
   const mobileMenuBtn = document.getElementById("mobile-menu-btn");
   const mobileMenu = document.getElementById("mobile-menu");
   const mobileLinks = document.querySelectorAll(".mobile-link");
@@ -100,9 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const backdrop = document.getElementById("mobile-menu-backdrop");
 
     function openMobileMenu() {
-      // Show overlay first (display:flex), then animate card from scale-0 to scale-100
+      // Show overlay, then scale card in
       mobileMenu.style.display = "flex";
-      // Use rAF to ensure display:flex is applied before transition starts
+      // rAF so display applies before transition
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           card.style.transform = "scale(1)";
@@ -112,16 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function closeMobileMenu() {
-      // Animate card back to scale-0
+      // Scale card out
       card.style.transform = "scale(0)";
       card.style.opacity = "0";
-      // Hide overlay after animation completes
+      // Hide after animation
       setTimeout(() => {
         mobileMenu.style.display = "none";
       }, 300);
     }
 
-    // Set initial card state via inline style
+    // Initial card state
     card.style.transform = "scale(0)";
     card.style.opacity = "0";
 
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "YoRHa No.2 Type B",
   ];
 
-  // ── Lightbox ──────────────────────────────────────────────────
+  // Lightbox
   let currentIndex = 0;
 
   const lightbox = document.createElement("div");
@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === lightbox) closeLightbox();
   });
 
-  // Keyboard navigation (active only when lightbox is open)
+  // Keyboard navigation
   document.addEventListener("keydown", (e) => {
     if (!lightbox.classList.contains("active")) return;
     if (e.key === "Escape") closeLightbox();
@@ -265,8 +265,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const dx = e.changedTouches[0].screenX - touchStartX;
     const dy = e.changedTouches[0].screenY - touchStartY;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) showImage(currentIndex + 1); // swipe left → next
-      else showImage(currentIndex - 1); // swipe right → prev
+      if (dx < 0) showImage(currentIndex + 1); // swipe left: next
+      else showImage(currentIndex - 1); // swipe right: prev
     }
   }, { passive: true });
 
@@ -281,48 +281,56 @@ document.addEventListener("DOMContentLoaded", () => {
       gallery.appendChild(item);
     });
 
-    // Scroll-reveal with IntersectionObserver
+    // Scroll-reveal & Viewport Play/Pause with IntersectionObserver
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add("gallery-visible");
-          revealObserver.unobserve(entry.target);
+          entry.target.classList.remove("anim-paused");
+        } else {
+          if (entry.target.classList.contains("gallery-visible")) {
+            entry.target.classList.add("anim-paused");
+          }
         }
       });
-    }, { threshold: 0.05, rootMargin: "0px 0px 100px 0px" });
+    }, { threshold: 0.05, rootMargin: "150px 0px" });
 
     gallery.querySelectorAll(".gallery-reveal").forEach(el => revealObserver.observe(el));
 
-    // Fallback: reveal after 600ms so nothing stays hidden
+    // Fallback reveal
     setTimeout(() => {
       gallery.querySelectorAll(".gallery-reveal").forEach(el => el.classList.add("gallery-visible"));
-    }, 600);
+    }, 800);
   }
 
-  // --- Projects Scroll Reveal ---
+  // Projects Scroll Reveal & Viewport Play/Pause
   const projectCards = document.querySelectorAll("#projects .project-reveal");
   if (projectCards.length > 0) {
     const projectObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add("project-visible");
-          projectObserver.unobserve(entry.target);
+          entry.target.classList.remove("anim-paused");
+        } else {
+          if (entry.target.classList.contains("project-visible")) {
+            entry.target.classList.add("anim-paused");
+          }
         }
       });
-    }, { threshold: 0.05, rootMargin: "0px 0px 100px 0px" });
+    }, { threshold: 0.05, rootMargin: "150px 0px" });
 
     projectCards.forEach((card, idx) => {
       card.style.setProperty("--card-idx", idx);
       projectObserver.observe(card);
     });
 
-    // Fallback: reveal after 600ms so cards never stay blank
+    // Fallback reveal
     setTimeout(() => {
       projectCards.forEach(c => c.classList.add("project-visible"));
-    }, 600);
+    }, 800);
   }
 
-  // --- CLI Terminal Easter Egg (open with ` or ~) ---
+  // CLI Terminal Easter Egg (open with ` or ~)
   let tInit = false;
   let tOverlay, tInput, tOutput, tClose;
 
@@ -368,43 +376,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Commands evaluation
         const cmds = {
-          help: () => [
-            "Available commands:",
-            "  whoami   - Display information about me",
-            "  skills   - List my technical skills",
-            "  projects - See what I've been working on",
-            "  clear    - Clear terminal output",
-            "  exit     - Close the terminal"
+          help: [
+            "Commands:",
+            "  about    - Brief bio",
+            "  skills   - Tech stack",
+            "  projects - Recent works",
+            "  contact  - Email & GitHub",
+            "  clear    - Clear screen (cls)",
+            "  exit     - Close terminal (q)"
           ],
-          whoami: () => [
-            "Fabian Hendriyansah.",
-            "Computer Engineering student, Frontend Developer, and UI/UX Designer."
+          about: [
+            "Fabian Hendriyansah",
+            "Computer Engineering student & Frontend Developer."
           ],
-          skills: () => [
-            "Python, PHP, Laravel, JavaScript, TailwindCSS, FastAPI, Docker, Git, MySQL, Figma, Arduino, Flutter."
+          skills: "HTML, CSS, JS, Tailwind, Python, PHP, Laravel, Docker, Git, Figma.",
+          projects: [
+            "Projects: Weather App, Sign Language AI, Image Upscaler, Pharma Medic.",
+            "Scroll through the 'WEB PROJECTS' section for live links!"
           ],
-          projects: () => [
-            "Check out the WEB PROJECTS section on this page!",
-            "- Weather App",
-            "- Sign Language Recognition",
-            "- Image Upscaler",
-            "- Jamkot",
-            "- Sticker",
-            "- Dashboard",
-            "- Pharma Medic (Pharmacy IoT Storage)"
+          contact: [
+            "Email: fabianhendriyansahbusiness@gmail.com",
+            "GitHub: github.com/Rextt1122"
           ],
-          sudo: () => [
-            "Nice try. You are not in the sudoers file. This incident will be reported."
-          ],
-          clear: () => { tOutput.innerHTML = ""; return null; },
-          exit: () => { tOverlay.classList.add("hidden"); return null; }
+          sudo: "Permission denied.",
+          clear: () => { tOutput.innerHTML = ""; },
+          exit: () => { tOverlay.classList.add("hidden"); }
         };
 
+        // Aliases / Shortcuts
+        cmds.h = cmds["?"] = cmds.help;
+        cmds.whoami = cmds.bio = cmds.about;
+        cmds.skill = cmds.skills;
+        cmds.proj = cmds.projects;
+        cmds.mail = cmds.contact;
+        cmds.cls = cmds.clear;
+        cmds.q = cmds.close = cmds.exit;
+
         if (cmds[cmd]) {
-          const res = cmds[cmd]();
-          if (res) res.forEach(r => pLine(r));
+          const val = cmds[cmd];
+          if (typeof val === "function") {
+            val();
+          } else if (Array.isArray(val)) {
+            val.forEach(r => pLine(r));
+          } else {
+            pLine(val);
+          }
         } else {
-          pLine(`bash: ${cmd}: command not found`);
+          pLine(`Command not found: ${cmd}. Type 'help' for commands.`);
         }
       }
     });
@@ -429,12 +447,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- GitHub Repo Dates Sync ---
-  // Unauthenticated api.github.com allows 60 req/hr per IP, and a shadowban or
-  // offline visit turns every card into ERROR. So: cache in localStorage with a
-  // 6h TTL, fall back to the stale cache when a fetch fails, then to the
-  // hardcoded data-fallback date, and finally hide the badge rather than print
-  // a fake value.
+  // GitHub Repo Dates Sync
+  // Cache in localStorage (6h), fall back to stale cache, then data-fallback, else hide badge.
   const GH_CACHE_KEY = "ryven.gh.pushdates";
   const GH_CACHE_TTL = 6 * 60 * 60 * 1000;
 
@@ -479,7 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cache[repo] = { d, t: Date.now() };
         return { text: `LAST PUSH: ${d}`, stale: false };
       } catch {
-        // rate limited, shadowbanned, or offline: a stale date beats no date
+        // Offline or rate limited: use stale date
         if (hit) return { text: `LAST PUSH: ${hit.d}`, stale: true };
         return null;
       }
@@ -506,13 +520,13 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // no date of any kind: hide the badge instead of printing a lie
+        // No date: hide badge
         span.hidden = true;
       })
     ).then(() => writeCache(cache));
   }
 
-  // --- Feedback Modal Logic ---
+  // Feedback Modal Logic
   const fbBtn = document.getElementById("open-feedback-btn");
   const fbModal = document.getElementById("feedback-modal");
   const fbClose = document.getElementById("feedback-modal-close");
